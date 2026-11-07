@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) &&
+                   (!('pointsBalance' in request.resource.data) || request.resource.data.pointsBalance >= 0);
+
+      match /reservations/{reservationId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /transactions/{transactionId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && (!('userId' in request.resource.data) || request.resource.data.userId == userId);
+        allow update: if false; // Transactions are immutable once created
+        allow delete: if false; // Transactions cannot be deleted by clients
+      }
+    }
+
+    match /mall_slots/{slotDocId} {
+      allow read: if true;
+      allow create: if isAuthenticated() &&
+                     request.resource.data.bookedByUid == request.auth.uid;
+      allow update: if isAuthenticated() && (
+        // Case 1: Slot is currently AVAILABLE -> User can reserve it for themselves
+        (resource.data.status == 'AVAILABLE' && request.resource.data.status == 'RESERVED' && request.resource.data.bookedByUid == request.auth.uid) ||
+        // Case 2: Slot is currently RESERVED by this user -> User can update or release it
+        (resource.data.bookedByUid == request.auth.uid)
+      );
+      allow delete: if isAuthenticated() && resource.data.bookedByUid == request.auth.uid;
+    }
+  }
+}

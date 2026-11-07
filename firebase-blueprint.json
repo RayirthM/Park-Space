@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "User": {
+      "path": "/users/{userId}",
+      "description": "User profile with vehicle details, points balance, and onboarding status",
+      "fields": {
+        "uid": { "type": "string", "description": "Firebase Authentication user ID" },
+        "fullName": { "type": "string", "description": "Full display name of user" },
+        "email": { "type": "string", "description": "User email address" },
+        "pointsBalance": { "type": "number", "description": "Current SmartPark Points balance" },
+        "onboardingCompleted": { "type": "boolean", "description": "Whether vehicle onboarding is completed" },
+        "vehicles": { "type": "list", "description": "List of registered vehicle maps" },
+        "defaultVehiclePlate": { "type": "string", "description": "Default vehicle registration plate" },
+        "defaultVehicleEmirate": { "type": "string", "description": "Default vehicle Emirate" },
+        "createdAt": { "type": "timestamp", "description": "Account creation timestamp" },
+        "updatedAt": { "type": "timestamp", "description": "Profile last update timestamp" }
+      }
+    },
+    "Reservation": {
+      "path": "/users/{userId}/reservations/{reservationId}",
+      "description": "Parking slot reservations scoped to user",
+      "fields": {
+        "id": { "type": "string", "description": "Reservation UUID" },
+        "userId": { "type": "string", "description": "Owner user UID" },
+        "mallId": { "type": "string", "description": "Target mall ID" },
+        "mallName": { "type": "string", "description": "Target mall name" },
+        "floor": { "type": "string", "description": "Floor code (B2, B1, L1, L2)" },
+        "slotId": { "type": "string", "description": "Assigned slot code" },
+        "plateNumber": { "type": "string", "description": "Vehicle license plate" },
+        "durationMinutes": { "type": "number", "description": "Booked duration in minutes" },
+        "status": { "type": "string", "description": "Status (ACTIVE, COMPLETED, CANCELLED)" },
+        "createdAt": { "type": "timestamp", "description": "Booking creation timestamp" }
+      }
+    },
+    "Transaction": {
+      "path": "/users/{userId}/transactions/{transactionId}",
+      "description": "SmartPark Points wallet transaction record",
+      "fields": {
+        "id": { "type": "string", "description": "Transaction UUID" },
+        "userId": { "type": "string", "description": "Owner user UID" },
+        "title": { "type": "string", "description": "Transaction label" },
+        "points": { "type": "number", "description": "Points value change" },
+        "isPositive": { "type": "boolean", "description": "True if earned, false if redeemed" },
+        "createdAt": { "type": "timestamp", "description": "Transaction timestamp" }
+      }
+    },
+    "MallSlot": {
+      "path": "/mall_slots/{slotDocId}",
+      "description": "Shared real-time parking slot occupancy status across all UAE users and devices",
+      "fields": {
+        "slotDocId": { "type": "string", "description": "Unique composite key: mallId_floor_slotId" },
+        "mallId": { "type": "string", "description": "Mall ID (e.g. dubai_mall, yas_mall)" },
+        "floor": { "type": "string", "description": "Floor code (B2, B1, L1, L2)" },
+        "slotId": { "type": "string", "description": "Slot identifier (e.g. B2-A01)" },
+        "status": { "type": "string", "description": "AVAILABLE, OCCUPIED, or RESERVED" },
+        "bookedByUid": { "type": "string", "description": "UID of the user who holds the booking" },
+        "bookedPlate": { "type": "string", "description": "License plate of the booked car" },
+        "updatedAt": { "type": "timestamp", "description": "Last update timestamp" }
+      }
+    }
+  }
+}

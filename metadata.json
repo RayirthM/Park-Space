@@ -1,0 +1,6 @@
+{
+  "name": "SmartPark UAE",
+  "description": "Urban dynamic parking optimization & AR indoor navigation engine for UAE mega-malls with real-time slot tracking and gamified Smart Exit rewards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
